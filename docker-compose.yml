@@ -1,0 +1,59 @@
+version: "2"
+services:
+  dynamic-nested-remote:
+    build:
+      context: ./dynamic-nested-remote
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/modern/remote
+
+  dynamic-remote:
+      build:
+        context: ./dynamic-remote
+        dockerfile: Dockerfile
+      volumes:
+        - ./:/modern/remote
+
+  dynamic-remote-new-version:
+      build:
+        context: ./dynamic-remote-new-version
+        dockerfile: Dockerfile
+      volumes:
+        - ./:/modern/remote
+
+  host:
+      depends_on:
+        - dynamic-nested-remote
+        - dynamic-remote
+        - dynamic-remote-new-version
+        - nested-remote
+        - remote
+        - remote-new-version
+      build:
+        context: ./host
+        dockerfile: Dockerfile
+      volumes:
+        - ./:/modern/remote
+
+  nested-remote:
+        depends_on:
+            - remote
+        build:
+          context: ./nested-remote
+          dockerfile: Dockerfile
+        volumes:
+          - ./:/modern/remote
+
+  remote:
+        build:
+          context: ./remote
+          dockerfile: Dockerfile
+        volumes:
+          - ./:/modern/remote
+
+  remote-new-version:
+        build:
+          context: ./remote-new-version
+          dockerfile: Dockerfile
+        volumes:
+          - ./:/modern/remote
