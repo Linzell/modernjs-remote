@@ -4,11 +4,11 @@ import { loadRemote, registerRemotes } from '@modern-js/runtime/mf';
 registerRemotes([
   {
     name: 'dynamic_nested_remote',
-    entry: 'http://localhost:3054/mf-manifest.json',
+    entry: `${process.env.DYNAMIC_NESTED_REMOTE_URL || 'http://localhost:3054'}/mf-manifest.json`,
   },
   {
     name: 'dynamic_remote',
-    entry: 'http://localhost:3053/mf-manifest.json',
+    entry: `${process.env.DYNAMIC_REMOTE_URL || 'http://localhost:3053'}/mf-manifest.json`,
   },
 ]);
 

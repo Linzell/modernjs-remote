@@ -8,7 +8,7 @@ import {
 registerRemotes([
   {
     name: 'dynamic_remote',
-    entry: 'http://localhost:3053/mf-manifest.json',
+    entry: `${process.env.DYNAMIC_REMOTE_URL || 'http://localhost:3053'}/mf-manifest.json`,
   },
 ]);
 
@@ -37,7 +37,7 @@ const Index = (): JSX.Element => {
       [
         {
           name: 'dynamic_remote',
-          entry: 'http://localhost:3056/mf-manifest.json',
+          entry: `${process.env.DYNAMIC_REMOTE_URL || 'http://localhost:3056'}/mf-manifest.json`,
         },
       ],
       { force: true },

@@ -17,7 +17,7 @@ const Index = (): JSX.Element => {
       [
         {
           name: 'remote',
-          entry: 'http://localhost:3055/mf-manifest.json',
+          entry: `${process.env.REMOTE_URL || 'http://localhost:3055'}/mf-manifest.json`,
         },
       ],
       { force: true },
