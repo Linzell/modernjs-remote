@@ -1,38 +1,26 @@
-FROM node:18-alpine AS builder
-
-WORKDIR /app
-
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --prefer-offline
-
-COPY . .
-RUN pnpm build
-
-# Production stage
 FROM node:18-alpine
 
-# Install nginx
-RUN apk add --no-cache nginx
-
+# Set working directory
 WORKDIR /app
 
-# Copy built files and dependencies
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy workspace and package files
+COPY package.json pnpm-lock.yaml ./
 
-# Create start script directly in the container
-RUN echo '#!/bin/sh' > /start.sh && \
-    echo 'mkdir -p /run/nginx' >> /start.sh && \
-    echo 'nginx' >> /start.sh && \
-    echo 'cd /app && node ./dist/bundles/main.js' >> /start.sh && \
-    chmod +x /start.sh
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
-EXPOSE 80
+# Copy source code
+COPY . .
 
-CMD ["/start.sh"]
+# Build the application
+RUN pnpm build
+
+# Expose default port (adjust as needed)
+ENV PORT 3050
+EXPOSE $PORT
+
+# Start the application
+CMD ["pnpm", "start"]
