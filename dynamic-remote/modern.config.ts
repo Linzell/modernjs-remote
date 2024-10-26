@@ -13,6 +13,7 @@ export default defineConfig({
     ssr: {
       mode: 'stream',
     },
+    port: 8080,
   },
 
   plugins: [appTools(), moduleFederationPlugin()],

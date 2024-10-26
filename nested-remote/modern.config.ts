@@ -13,7 +13,7 @@ export default defineConfig({
     ssr: {
       mode: 'stream',
     },
-    port: 3052,
+    port: 8080,
   },
   plugins: [
     appTools({
