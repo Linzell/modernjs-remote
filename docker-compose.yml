@@ -1,59 +1,109 @@
 version: "2"
+networks:
+  modernjs_network:
+    driver: bridge
+
 services:
   dynamic-nested-remote:
     build:
       context: ./dynamic-nested-remote
       dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
     volumes:
       - ./:/modern/remote
+    networks:
+      - modernjs_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   dynamic-remote:
-      build:
-        context: ./dynamic-remote
-        dockerfile: Dockerfile
-      volumes:
-        - ./:/modern/remote
+    build:
+      context: ./dynamic-remote
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000"
+    volumes:
+      - ./:/modern/remote
+    networks:
+      - modernjs_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   dynamic-remote-new-version:
-      build:
-        context: ./dynamic-remote-new-version
-        dockerfile: Dockerfile
-      volumes:
-        - ./:/modern/remote
+    build:
+      context: ./dynamic-remote-new-version
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3000"
+    volumes:
+      - ./:/modern/remote
+    networks:
+      - modernjs_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   host:
-      depends_on:
-        - dynamic-nested-remote
-        - dynamic-remote
-        - dynamic-remote-new-version
-        - nested-remote
-        - remote
-        - remote-new-version
-      build:
-        context: ./host
-        dockerfile: Dockerfile
-      volumes:
-        - ./:/modern/remote
+    depends_on:
+      - dynamic-nested-remote
+      - dynamic-remote
+      - dynamic-remote-new-version
+      - nested-remote
+      - remote
+    build:
+      context: ./host
+      dockerfile: Dockerfile
+    ports:
+      - "3050:3000"
+    volumes:
+      - ./:/modern/remote
+    networks:
+      - modernjs_network
+    environment:
+      - DYNAMIC_NESTED_REMOTE_URL=http://dynamic-nested-remote:3000
+      - DYNAMIC_REMOTE_URL=http://dynamic-remote:3000
+      - NESTED_REMOTE_URL=http://nested-remote:3000
+      - REMOTE_URL=http://remote:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   nested-remote:
-        depends_on:
-            - remote
-        build:
-          context: ./nested-remote
-          dockerfile: Dockerfile
-        volumes:
-          - ./:/modern/remote
+    depends_on:
+      - remote
+    build:
+      context: ./nested-remote
+      dockerfile: Dockerfile
+    ports:
+      - "3004:3000"
+    volumes:
+      - ./:/modern/remote
+    networks:
+      - modernjs_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   remote:
-        build:
-          context: ./remote
-          dockerfile: Dockerfile
-        volumes:
-          - ./:/modern/remote
+    build:
+      context: ./remote
+      dockerfile: Dockerfile
+    ports:
+      - "3005:3000"
+    volumes:
+      - ./:/modern/remote
+    networks:
+      - modernjs_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   remote-new-version:
-        build:
-          context: ./remote-new-version
-          dockerfile: Dockerfile
-        volumes:
-          - ./:/modern/remote
+    build:
+      context: ./remote-new-version
+      dockerfile: Dockerfile
+    ports:
+      - "3006:3000"
+    volumes:
+      - ./:/modern/remote
+    networks:
+      - modernjs_network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
