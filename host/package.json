@@ -20,6 +20,7 @@
       "node --max_old_space_size=8192 ./node_modules/eslint/bin/eslint.js --fix --color --cache --quiet"
     ]
   },
+  "packageManager": "pnpm@9.12.2",
   "eslintIgnore": [
     "node_modules/",
     "dist/"
