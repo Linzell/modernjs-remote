@@ -19,7 +19,7 @@ COPY . .
 RUN pnpm build
 
 # Expose default port (adjust as needed)
-ENV PORT 3054
+ENV PORT 3055
 EXPOSE $PORT
 
 # Start the application
