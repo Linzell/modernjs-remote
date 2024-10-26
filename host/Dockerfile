@@ -1,4 +1,5 @@
-FROM node:18-alpine
+# Build stage
+FROM node:18-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -18,9 +19,17 @@ COPY . .
 # Build the application
 RUN pnpm build
 
-# Expose default port (adjust as needed)
-ENV PORT 3050
-EXPOSE $PORT
+# Production stage with Nginx
+FROM nginx:alpine
 
-# Start the application
-CMD ["pnpm", "start"]
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built assets from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

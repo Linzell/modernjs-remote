@@ -1,4 +1,5 @@
-FROM node:18-alpine
+# Build stage
+FROM node:18-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -10,7 +11,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --prefer-offline
 
 # Copy source code
 COPY . .
@@ -18,9 +19,17 @@ COPY . .
 # Build the application
 RUN pnpm build
 
-# Expose default port (adjust as needed)
-ENV PORT 3056
-EXPOSE $PORT
+# Production stage with Nginx
+FROM nginx:alpine
 
-# Start the application
-CMD ["pnpm", "start"]
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Copy built assets from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
